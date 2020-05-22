@@ -1,0 +1,29 @@
+{
+	"FileVersion": 3,
+	"Version": 6,
+	"VersionName": "1.3.0",
+	"FriendlyName": "iOS Goodies",
+	"Description": "iOS Goodies is a collection of iOS native methods for your Unreal Engine project.",
+	"Category": "Code Plugins",
+	"CreatedBy": "Nineva Studios",
+	"CreatedByURL": "https://ninevastudios.com/",
+	"DocsURL": "https://github.com/NinevaStudios/iOSGoodiesUnreal-SampleProject/wiki",
+	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/34bf1a00320e4628b96d588ac275fa24",
+	"SupportURL": "mailto:support@ninevastudios.com",
+	"EngineVersion": "4.25.0",
+	"CanContainContent": false,
+	"Installed": true,
+	"Modules": [
+		{
+			"Name": "IOSGoodies",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"WhitelistPlatforms": [
+				"Win64",
+				"Win32",
+				"Mac",
+				"IOS"
+			]
+		}
+	]
+}
