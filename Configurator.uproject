@@ -22,10 +22,15 @@
 			"Name": "IOSGoodies",
 			"Enabled": true,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/34bf1a00320e4628b96d588ac275fa24"
+		},
+		{
+			"Name": "BlueprintMaterialTextureNodes",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
 		"IOS",
-		"WindowsNoEditor"
+		"WindowsNoEditor",
+		"Android"
 	]
 }
