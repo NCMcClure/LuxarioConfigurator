@@ -66,36 +66,62 @@
 	</gameActivityOnCreateAdditions>
 	<gameActivityClassAdditions>
 		<insert>
-    		private static final int REQUEST_CHECK_SETTINGS = 0x1;
-			private Intent serviceIntent;
-			private boolean startedWithServiceRunning;
+      private static final int REQUEST_CHECK_SETTINGS = 0x1;
+      private Intent serviceIntent;
+      private boolean startedWithServiceRunning;
 
-            public void AndroidThunkJava_HelloToast() 
-            {
-                (Toast.makeText(getApplicationContext(), "Hello Configurator from java... would you call this native?", Toast.LENGTH_LONG)).show();
-            }
+      public void AndroidThunkJava_HelloToast()
+      {
+      runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+      (Toast.makeText(getApplicationContext(), "Hello Configurator from java... would you call this native?", Toast.LENGTH_LONG)).show();
+      }
+      });
+      }
 
-			public void AndroidThunkJava_CreateGoogleMap(final boolean trackingEnabled,
-				final float posX, final float posY, 
-				final float sizeX, final float sizeY, float renderX) {
-			        Log.debug("In AndroidThunkJava_CreateGoogleMap");
-			        DisplayMetrics dm = getResources().getDisplayMetrics();
-			        final float scale = dm.widthPixels / renderX;
-			        Log.debug("dm:" + dm.widthPixels + "render:" + renderX);
+      public void AndroidThunkJava_CreateGoogleMap(final boolean trackingEnabled,
+      final float posX, final float posY,
+      final float sizeX, final float sizeY, float renderX) {
+      Log.debug("In AndroidThunkJava_CreateGoogleMap");
+      DisplayMetrics dm = getResources().getDisplayMetrics();
+      final float scale = dm.widthPixels / renderX;
+      Log.debug("dm:" + dm.widthPixels + "render:" + renderX);
 
-			        Log.debug("new UEMapDialog");
-			        _activity.runOnUiThread(new Runnable() {
-					    public void run() {
-					        //mMapDialog = new UEMapDialog(_activity, 
-					        //	trackingEnabled, startedWithServiceRunning,
-					        //	(int)(posX * scale), (int) (posY * scale), 
-					        //	(int) (sizeX * scale), (int) (sizeY * scale));
-					        //mMapDialog.show();
-					    }
-					});
-		    }
+      Log.debug("new UEMapDialog");
+      _activity.runOnUiThread(new Runnable() {
+      public void run() {
+      //mMapDialog = new UEMapDialog(_activity,
+      //	trackingEnabled, startedWithServiceRunning,
+      //	(int)(posX * scale), (int) (posY * scale),
+      //	(int) (sizeX * scale), (int) (sizeY * scale));
+      //mMapDialog.show();
+      }
+      });
+      }
 
-		</insert>
+      /*
+      *
+      *    String type = "image/*";
+      *    String filename = "/myPhoto.jpg";
+      *    String mediaPath = Environment.getExternalStorageDirectory() + filename;
+      *    createInstagramIntent(type, mediaPath);
+      */
+
+      public void AndroidThunkJava_CreateInstagramIntent(String type, String mediaPath)
+      {
+      Intent share = new Intent(Intent.ACTION_SEND);
+      share.setType(type);
+
+      File media = new File(mediaPath);
+
+      Uri uri = Uri.fromFile(media);
+      share.putExtra(Intent.EXTRA_STREAM, uri);
+
+      startActivity(Intent.createChooser(share, "Share to"));
+      }
+
+    </insert>
 	</gameActivityClassAdditions>
 
 	<gameActivityOnActivityResultAdditions>	
