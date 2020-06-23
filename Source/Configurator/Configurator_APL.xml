@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--GoogleMaps plugin additions-->
+<root xmlns:android="http://schemas.android.com/apk/res/android">
+	<androidManifestUpdates>
+		<addElements tag="application">
+				<meta-data android:name="com.google.android.gms.version" 
+					android:value="@integer/google_play_services_version" />
+			<!--<meta-data android:name="com.google.android.geo.API_KEY"
+					android:value="AIzaSyAIahxW93kRq42j2hnpK_5HBDXv4oufb8w"/>-->
+			<meta-data android:name="com.google.android.geo.API_KEY"
+					android:value="AIzaSyChN7lO4AdIZQR1hIItdThFjbqEjCwqT00"/>     
+
+			<service
+	            android:name="com.jeevcatgames.GPSService"
+	            android:exported="false"
+	            android:process=":remote"/>
+
+		</addElements>
+
+		<addElements tag="manifest">
+			<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+			<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+		</addElements>	
+	</androidManifestUpdates>
+	<prebuildCopies>
+		<copyDir src="$S(PluginDir)/Java" dst="$S(BuildDir)" />
+	</prebuildCopies>
+	<proguardAdditions>
+    	<insert>
+    		-keep class * extends java.util.ListResourceBundle {
+			    protected Object[][] getContents();
+			}
+
+			-keep public class com.google.android.gms.common.internal.safeparcel.SafeParcelable {
+			    public static final *** NULL;
+			}
+
+			-keepnames @com.google.android.gms.common.annotation.KeepName class *
+			-keepclassmembernames class * {
+			    @com.google.android.gms.common.annotation.KeepName *;
+			}
+
+			-keepnames class * implements android.os.Parcelable {
+			    public static final ** CREATOR;
+			}
+	    </insert>
+	</proguardAdditions>
+	
+	<gameActivityImportAdditions>
+		<insert>
+			import android.os.Bundle;
+			import android.app.ActivityManager;
+            import android.widget.Toast;
+		</insert>
+	</gameActivityImportAdditions>
+	<gameActivityOnStartAdditions>
+		<insert>
+            (Toast.makeText(getApplicationContext(), "Hello Configurator from java... would you call this native?", Toast.LENGTH_LONG)).show();
+		</insert>
+	</gameActivityOnStartAdditions>
+	<gameActivityOnCreateAdditions>
+		<insert>
+            (Toast.makeText(getApplicationContext(), "Hello Configurator from java... would you call this native?", Toast.LENGTH_LONG)).show();
+			//serviceIntent = new Intent(_activity, GPSService.class);
+		</insert>
+	</gameActivityOnCreateAdditions>
+	<gameActivityClassAdditions>
+		<insert>
+    		private static final int REQUEST_CHECK_SETTINGS = 0x1;
+			private Intent serviceIntent;
+			private boolean startedWithServiceRunning;
+
+            public void AndroidThunkJava_HelloToast() 
+            {
+                (Toast.makeText(getApplicationContext(), "Hello Configurator from java... would you call this native?", Toast.LENGTH_LONG)).show();
+            }
+
+			public void AndroidThunkJava_CreateGoogleMap(final boolean trackingEnabled,
+				final float posX, final float posY, 
+				final float sizeX, final float sizeY, float renderX) {
+			        Log.debug("In AndroidThunkJava_CreateGoogleMap");
+			        DisplayMetrics dm = getResources().getDisplayMetrics();
+			        final float scale = dm.widthPixels / renderX;
+			        Log.debug("dm:" + dm.widthPixels + "render:" + renderX);
+
+			        Log.debug("new UEMapDialog");
+			        _activity.runOnUiThread(new Runnable() {
+					    public void run() {
+					        //mMapDialog = new UEMapDialog(_activity, 
+					        //	trackingEnabled, startedWithServiceRunning,
+					        //	(int)(posX * scale), (int) (posY * scale), 
+					        //	(int) (sizeX * scale), (int) (sizeY * scale));
+					        //mMapDialog.show();
+					    }
+					});
+		    }
+
+		</insert>
+	</gameActivityClassAdditions>
+
+	<gameActivityOnActivityResultAdditions>	
+		<insert>
+		</insert>
+	</gameActivityOnActivityResultAdditions>
+	<gameActivityOnPauseAdditions>
+		<insert>
+		</insert>
+	</gameActivityOnPauseAdditions>
+	<gameActivityOnResumeAdditions>
+		<insert>
+		</insert>
+	</gameActivityOnResumeAdditions>
+</root>
