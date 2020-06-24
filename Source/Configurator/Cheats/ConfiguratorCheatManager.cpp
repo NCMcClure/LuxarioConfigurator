@@ -16,7 +16,7 @@
 
 void UConfiguratorCheatManager::ConfiguratorShareSampleToInstagram()
 {
-	if (UTexture2D* SampleInstagramTexture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, TEXT("/Game/Developers/Jury/InstagramSample"))))
+	if (UTexture2D* SampleInstagramTexture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), nullptr, TEXT("/Game/InstagramSample"))))
 	{
 		UInstagramBlueprintStatics::ShareToInstagram(SampleInstagramTexture);
 	}
