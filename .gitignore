@@ -1,5 +1,7 @@
 ### https://raw.githubusercontent.com/github/gitignore/master/UnrealEngine.gitignore ###
 
+enc_temp_folder
+
 # Visual Studio Code
 .vscode
 *.code-workspace

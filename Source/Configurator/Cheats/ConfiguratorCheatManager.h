@@ -15,7 +15,6 @@ class CONFIGURATOR_API UConfiguratorCheatManager : public UCheatManager
 	GENERATED_BODY()
 	
 public:
-///storage/self/primary/UE4Game/Configurator/Configurator/Content/Non-Assets
 	UFUNCTION(Exec)
 	void ConfiguratorShareSampleToInstagram();	
 };

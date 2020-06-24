@@ -1,0 +1,4 @@
+<!-- e.g. content://com.luxario.configurator.fileprovider/files/default_image.jpg -->
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+  <external-files-path name="files" path="/"/>
+</paths>

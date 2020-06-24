@@ -3,28 +3,19 @@
 <root xmlns:android="http://schemas.android.com/apk/res/android">
 	<androidManifestUpdates>
 		<addElements tag="application">
-				<meta-data android:name="com.google.android.gms.version" 
-					android:value="@integer/google_play_services_version" />
-			<!--<meta-data android:name="com.google.android.geo.API_KEY"
-					android:value="AIzaSyAIahxW93kRq42j2hnpK_5HBDXv4oufb8w"/>-->
-			<meta-data android:name="com.google.android.geo.API_KEY"
-					android:value="AIzaSyChN7lO4AdIZQR1hIItdThFjbqEjCwqT00"/>     
-
-			<service
-	            android:name="com.jeevcatgames.GPSService"
-	            android:exported="false"
-	            android:process=":remote"/>
-
-		</addElements>
+      <provider android:name="android.support.v4.content.FileProvider" android:authorities="com.luxario.configurator.fileprovider" android:exported="false" android:grantUriPermissions="true">
+        <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_provider_paths" />
+      </provider>
+    </addElements>
 
 		<addElements tag="manifest">
-			<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-			<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+      <!--uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+      <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /-->
 		</addElements>	
 	</androidManifestUpdates>
-	<prebuildCopies>
-		<copyDir src="$S(PluginDir)/Java" dst="$S(BuildDir)" />
-	</prebuildCopies>
+  <prebuildCopies>
+    <copyDir src="$S(PluginDir)/java" dst="$S(BuildDir)" />
+  </prebuildCopies>
 	<proguardAdditions>
     	<insert>
     		-keep class * extends java.util.ListResourceBundle {
@@ -48,20 +39,18 @@
 	
 	<gameActivityImportAdditions>
 		<insert>
-			import android.os.Bundle;
-			import android.app.ActivityManager;
-            import android.widget.Toast;
-		</insert>
+      import android.util.Log;
+      import android.os.Bundle;
+      import android.app.ActivityManager;
+      import android.widget.Toast;
+    </insert>
 	</gameActivityImportAdditions>
 	<gameActivityOnStartAdditions>
 		<insert>
-            (Toast.makeText(getApplicationContext(), "Hello Configurator from java... would you call this native?", Toast.LENGTH_LONG)).show();
 		</insert>
 	</gameActivityOnStartAdditions>
 	<gameActivityOnCreateAdditions>
 		<insert>
-            (Toast.makeText(getApplicationContext(), "Hello Configurator from java... would you call this native?", Toast.LENGTH_LONG)).show();
-			//serviceIntent = new Intent(_activity, GPSService.class);
 		</insert>
 	</gameActivityOnCreateAdditions>
 	<gameActivityClassAdditions>
@@ -69,16 +58,6 @@
       private static final int REQUEST_CHECK_SETTINGS = 0x1;
       private Intent serviceIntent;
       private boolean startedWithServiceRunning;
-
-      public void AndroidThunkJava_HelloToast()
-      {
-      runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-      (Toast.makeText(getApplicationContext(), "Hello Configurator from java... would you call this native?", Toast.LENGTH_LONG)).show();
-      }
-      });
-      }
 
       public void AndroidThunkJava_CreateGoogleMap(final boolean trackingEnabled,
       final float posX, final float posY,
@@ -108,17 +87,22 @@
       *    createInstagramIntent(type, mediaPath);
       */
 
-      public void AndroidThunkJava_CreateInstagramIntent(String type, String mediaPath)
+      public void AndroidThunkJava_CreateInstagramIntent(final String type, final String mediaPath)
       {
+      runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
       Intent share = new Intent(Intent.ACTION_SEND);
       share.setType(type);
-
-      File media = new File(mediaPath);
-
-      Uri uri = Uri.fromFile(media);
+      File file = new File(getExternalFilesDir(null), mediaPath);
+      Uri uri = FileProvider.getUriForFile(getApplicationContext(), "com.luxario.configurator.fileprovider", file);
       share.putExtra(Intent.EXTRA_STREAM, uri);
-
-      startActivity(Intent.createChooser(share, "Share to"));
+      share.setPackage("com.instagram.android");
+      Intent newIntent = Intent.createChooser(share, "Share to");
+      newIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+      startActivity(newIntent);
+      }
+      });
       }
 
     </insert>
