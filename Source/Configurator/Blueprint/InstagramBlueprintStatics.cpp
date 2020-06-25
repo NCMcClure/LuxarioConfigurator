@@ -25,7 +25,7 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
 		return;
 	}
 
-	FString TexturePath = TEXT("InstaOut.png");
+	FString TexturePath = TEXT("InstaOut.jpeg");
 	
 #if PLATFORM_ANDROID
 	extern FString GExternalFilePath;
@@ -37,7 +37,7 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
 
     NSString *documentPath = [documentArr firstObject];
 
-    NSString *path2 = [NSString stringWithFormat:@"%@/InstaOut.ig",documentPath];
+    NSString *path2 = [NSString stringWithFormat:@"%@/InstaOut.igo",documentPath];
 
     TexturePath = FString(path2);
 #endif
@@ -68,13 +68,13 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
 
 			Texture->PlatformData->Mips[0].BulkData.Unlock();
 
-			stbi_write_png(TCHAR_TO_UTF8(*TexturePath), Width, Height, 4, OrderedPixelData, 4 * Width);
+			stbi_write_jpg(TCHAR_TO_UTF8(*TexturePath), Width, Height, 4, OrderedPixelData, 100);
 			const FString Type = "image/*";
 
 #if PLATFORM_ANDROID
 			if (JNIEnv* Env = FAndroidApplication::GetJavaEnv(true))
 			{
-				jstring JavaPath = Env->NewStringUTF(TCHAR_TO_UTF8(TEXT("InstaOut.png")));
+				jstring JavaPath = Env->NewStringUTF(TCHAR_TO_UTF8(TEXT("InstaOut.jpeg")));
 				jstring JavaType = Env->NewStringUTF(TCHAR_TO_UTF8(*Type));
 
 				static jmethodID Method = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_CreateInstagramIntent", "(Ljava/lang/String;Ljava/lang/String;)V", false);
@@ -92,7 +92,7 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
              
                     // Configure Document Interaction Controller
                     //[self.documentInteractionController setDelegate:self];
-                documentInteractionController.UTI = @"com.instagram.photo";
+                documentInteractionController.UTI = @"com.instagram.exclusivegram";
 
                 UIView *view = [IOSAppDelegate GetDelegate].RootView;
                     // Preview PDF
