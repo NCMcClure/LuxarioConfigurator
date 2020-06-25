@@ -32,7 +32,13 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
 #endif
 
 #if PLATFORM_IOS
-	TexturePath = TEXT("InstaOut.ig");
+    NSArray *documentArr = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+
+    NSString *documentPath = [documentArr firstObject];
+
+    NSString *path2 = [NSString stringWithFormat:@"%@/InstaOut.ig",documentPath];
+
+    TexturePath = FString(path2);
 #endif
 
 	const int32 Width = Texture->GetSizeX();
@@ -75,7 +81,9 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
 			}
 #endif
 #if PLATFORM_IOS
-            NSURL* ImageUrl = [NSURL URLWithString : [NSString stringWithFormat : @"file://%@", @"InstaOut.ig"] ];
+            NSString *nsTexturePath = [NSString stringWithUTF8String:TCHAR_TO_ANSI(*TexturePath)];
+
+            NSURL* ImageUrl = [NSURL URLWithString : [NSString stringWithFormat : @"file://%@", nsTexturePath] ];
                 // Initialize Document Interaction Controller
             UIDocumentInteractionController* documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:ImageUrl];
          
