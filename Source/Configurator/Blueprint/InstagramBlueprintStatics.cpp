@@ -92,7 +92,7 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
              
                     // Configure Document Interaction Controller
                     //[self.documentInteractionController setDelegate:self];
-                documentInteractionController.UTI = @"com.instagram.exclusivegram";
+                documentInteractionController.UTI = @"com.instagram.photo";
 
                 UIView *view = [IOSAppDelegate GetDelegate].RootView;
                     // Preview PDF
