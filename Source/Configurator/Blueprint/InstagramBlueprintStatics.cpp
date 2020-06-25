@@ -13,6 +13,7 @@
 #if PLATFORM_IOS
 #import <Foundation/Foundation.h>
 #import <MobileCoreServices/MobileCoreServices.h>
+#import "InstagramShare.h"
 #include "IOS/IOSAppDelegate.h"
 #endif
 
@@ -95,8 +96,11 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
             UIImage *image = [UIImage imageWithContentsOfFile:nsTexturePath];
             
             dispatch_async(dispatch_get_main_queue(), ^{
+                [[InstagramSharing sharedData] instaGramWallPost:nsTexturePath inView: [IOSAppDelegate GetDelegate].RootView];
+
+                /*
                 UIView *view = [IOSAppDelegate GetDelegate].RootView;
-                NSString *instagramFileName = [[@"instagram" stringByDeletingPathExtension] stringByAppendingString:@".igo"];
+                NSString *instagramFileName = [[@"instagram" stringByDeletingPathExtension] stringByAppendingString:@".ig"];
                 NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
                 NSString *documentsPath = [paths objectAtIndex:0]; //Get the docs directory
                 NSString *instagramFilePath = [documentsPath stringByAppendingPathComponent:instagramFileName];
@@ -123,6 +127,7 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
                 else{
                     NSLog(@"Error - Error saving instagram photo to disk");
                 }
+                 */
             });
             /*
              Old approach
