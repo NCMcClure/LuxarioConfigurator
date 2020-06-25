@@ -12,10 +12,18 @@
 
 #if PLATFORM_IOS
 #import <Foundation/Foundation.h>
+#import <MobileCoreServices/MobileCoreServices.h>
 #include "IOS/IOSAppDelegate.h"
 #endif
 
 #include "Engine/Texture2D.h"
+
+#if PLATFORM_IOS
+static NSString *const kInstagramCommentKey = @"InstagramCaption";
+static NSString *const kInstagramUTI = @"com.instagram.exclusivegram";
+static CGFloat const kInstagramImageSize = 612.0;
+static UIDocumentInteractionController* InteractionController;
+#endif
 
 void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
 {
@@ -37,7 +45,7 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
 
     NSString *documentPath = [documentArr firstObject];
 
-    NSString *path2 = [NSString stringWithFormat:@"%@/InstaOut.igo",documentPath];
+    NSString *path2 = [NSString stringWithFormat:@"%@/InstaOut.jpeg",documentPath];
 
     TexturePath = FString(path2);
 #endif
@@ -83,7 +91,41 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
 #endif
 #if PLATFORM_IOS
             NSString *nsTexturePath = [NSString stringWithUTF8String:TCHAR_TO_ANSI(*TexturePath)];
-
+            
+            UIImage *image = [UIImage imageWithContentsOfFile:nsTexturePath];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                UIView *view = [IOSAppDelegate GetDelegate].RootView;
+                NSString *instagramFileName = [[@"instagram" stringByDeletingPathExtension] stringByAppendingString:@".igo"];
+                NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+                NSString *documentsPath = [paths objectAtIndex:0]; //Get the docs directory
+                NSString *instagramFilePath = [documentsPath stringByAppendingPathComponent:instagramFileName];
+                
+                //Resize image to 612 x 612 (min required by instagram)
+                UIGraphicsBeginImageContext(CGSizeMake(kInstagramImageSize, kInstagramImageSize));
+                [image drawInRect:CGRectMake(0,0,kInstagramImageSize,kInstagramImageSize)];
+                UIImage* instagramImage = UIGraphicsGetImageFromCurrentImageContext();
+                UIGraphicsEndImageContext();
+                
+                //Save to disk
+                BOOL savedSuccess = [UIImagePNGRepresentation(instagramImage) writeToFile:instagramFilePath atomically:YES];
+                
+                //If successfully saved
+                if (savedSuccess)
+                {
+                    //Create document controller with instagram file
+                    InteractionController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:instagramFilePath]];
+                    UIDocumentInteractionController *documentInteractionController = InteractionController;
+                    documentInteractionController.UTI = kInstagramUTI;
+                    documentInteractionController.annotation = @"My new custom mold";
+                    [documentInteractionController presentOpenInMenuFromRect:CGRectZero inView:view animated:YES];
+                }
+                else{
+                    NSLog(@"Error - Error saving instagram photo to disk");
+                }
+            });
+            /*
+             Old approach
             NSURL* ImageUrl = [NSURL URLWithString : [NSString stringWithFormat : @"file://%@", nsTexturePath] ];
             
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -98,6 +140,7 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
                     // Preview PDF
                 [documentInteractionController presentOpenInMenuFromRect:CGRectZero inView:view animated:YES ];
             });
+             */
 #endif
 		}
 		else
