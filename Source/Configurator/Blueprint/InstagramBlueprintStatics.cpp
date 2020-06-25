@@ -12,6 +12,7 @@
 
 #if PLATFORM_IOS
 #import <Foundation/Foundation.h>
+#include "IOS/IOSAppDelegate.h"
 #endif
 
 #include "Engine/Texture2D.h"
@@ -91,8 +92,9 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
                 //[self.documentInteractionController setDelegate:self];
             documentInteractionController.UTI = @"com.instagram.exclusivegram";
 
+            UIView *view = [IOSAppDelegate GetDelegate].RootView;
                 // Preview PDF
-            [documentInteractionController presentPreviewAnimated:YES];
+            [documentInteractionController presentOpenInMenuFromRect:CGRectZero inView:view animated:YES ];
 #endif
 		}
 		else
