@@ -85,16 +85,19 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
             NSString *nsTexturePath = [NSString stringWithUTF8String:TCHAR_TO_ANSI(*TexturePath)];
 
             NSURL* ImageUrl = [NSURL URLWithString : [NSString stringWithFormat : @"file://%@", nsTexturePath] ];
-                // Initialize Document Interaction Controller
-            UIDocumentInteractionController* documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:ImageUrl];
-         
-                // Configure Document Interaction Controller
-                //[self.documentInteractionController setDelegate:self];
-            documentInteractionController.UTI = @"com.instagram.exclusivegram";
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                    // Initialize Document Interaction Controller
+                UIDocumentInteractionController* documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:ImageUrl];
+             
+                    // Configure Document Interaction Controller
+                    //[self.documentInteractionController setDelegate:self];
+                documentInteractionController.UTI = @"com.instagram.exclusivegram";
 
-            UIView *view = [IOSAppDelegate GetDelegate].RootView;
-                // Preview PDF
-            [documentInteractionController presentOpenInMenuFromRect:CGRectZero inView:view animated:YES ];
+                UIView *view = [IOSAppDelegate GetDelegate].RootView;
+                    // Preview PDF
+                [documentInteractionController presentOpenInMenuFromRect:CGRectZero inView:view animated:YES ];
+            });
 #endif
 		}
 		else
