@@ -74,6 +74,8 @@ static InstagramShare* sharedInstance = nil;
 	NSURL* appURL = [NSURL URLWithString : @"instagram://app"];
 	if ([[UIApplication sharedApplication]canOpenURL:appURL] )
 	{
+        dispatch_async(dispatch_get_main_queue(), ^ {
+
 		// Image
 		UIImage* image = [UIImage imageWithContentsOfFile : imagePath];
         
@@ -83,7 +85,7 @@ static InstagramShare* sharedInstance = nil;
 
     [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
         _mChangeRequest = [PHAssetChangeRequest creationRequestForAssetFromImage:image];
-        placeholder = _mChangeRequest.placeholderForCreatedAsset;
+        placeholder = [_mChangeRequest placeholderForCreatedAsset];
     } completionHandler:^(BOOL success, NSError *error) {
         if (success) {
             NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat:@"instagram://library?LocalIdentifier=\%@", [placeholder localIdentifier]]];
@@ -98,7 +100,9 @@ static InstagramShare* sharedInstance = nil;
             NSLog(@"error saving in camera roll : %@",error);
 			        }
     }];
+        });
         
+        /*
         return;
 ///////////////////////////////////////////////////////
 		// Post
@@ -114,12 +118,13 @@ static InstagramShare* sharedInstance = nil;
 		dispatch_async(dispatch_get_main_queue(), ^ {
 			[self.dic presentOpenInMenuFromRect : CGRectZero inView : nativeWindow.rootViewController.view animated : YES] ;
 		});
+         */
 	}
 	else
 	{
 		NSLog(@"Instagram not installed!");
 	}
-}
+}	
 
 -(NSString*)photoFilePath
 {
