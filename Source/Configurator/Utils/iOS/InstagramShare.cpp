@@ -11,10 +11,10 @@
 
 FString GetStorageFilePath(const FString& FileName)
 {
-	NString* NsFileName = [NSString stringWithUTF8String : TCHAR_TO_ANSI(*FileName)];
+	NSString* NsFileName = [NSString stringWithUTF8String : TCHAR_TO_ANSI(*FileName)];
 	NSArray* DomainDirectories = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 	NSString* DocumentsPath = [DomainDirectories firstObject];
-	NSString* OutputPath = [NSString stringWithFormat : @"%@/@", DocumentsPath, NsFileName];
+	NSString* OutputPath = [NSString stringWithFormat : @"%@/%@", DocumentsPath, NsFileName];
 	return FString(OutputPath);
 }
 
@@ -25,8 +25,8 @@ void IosDicInitialise()
 
 void PostToInstagram(const FString& Message, const FString& FilePath)
 {
-	NString* NsMessage = [NSString stringWithUTF8String : TCHAR_TO_ANSI(*Message)];
-	NString* NsFilePath = [NSString stringWithUTF8String : TCHAR_TO_ANSI(*FilePath)];
+	NSString* NsMessage = [NSString stringWithUTF8String : TCHAR_TO_ANSI(*Message)];
+	NSString* NsFilePath = [NSString stringWithUTF8String : TCHAR_TO_ANSI(*FilePath)];
 
 	static bool bIosDicInitialised = false;
 	if (!bIosDicInitialised)

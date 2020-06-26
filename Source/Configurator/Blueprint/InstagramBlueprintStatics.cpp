@@ -70,4 +70,3 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
 		UE_LOG(LogTemp, Log, TEXT("UInstagramBlueprintStatics::ShareToInstagram: FormatedImageData is null"));
 	}
 }
-
