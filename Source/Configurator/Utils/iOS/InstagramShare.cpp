@@ -81,14 +81,14 @@ static InstagramShare* sharedInstance = nil;
         
 //////////////////////////////////////////////////
     __block PHAssetChangeRequest *_mChangeRequest = nil;
-    __block PHObjectPlaceholder *placeholder;
+    __block PHObjectPlaceholder *placeholder = nil;
 
     [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
         _mChangeRequest = [PHAssetChangeRequest creationRequestForAssetFromImage:image];
         placeholder = [_mChangeRequest placeholderForCreatedAsset];
     } completionHandler:^(BOOL success, NSError *error) {
         if (success) {
-            NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat:@"instagram://library?LocalIdentifier=\%@", [placeholder localIdentifier]]];
+            NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat:@"instagram://library?LocalIdentifier=\%@", placeholder.localIdentifier]];
 
             if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
                 [[UIApplication sharedApplication] openURL:instagramURL options:@{} completionHandler:nil];
