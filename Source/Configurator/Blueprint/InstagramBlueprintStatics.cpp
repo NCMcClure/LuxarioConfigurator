@@ -79,7 +79,7 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
 				IosDicInitialise();
 			}
 
-			PostToInstagram(TCHAR_TO_UTF8(TEXT("Checkout my new custom mold!"), TCHAR_TO_UTF8(*TexturePath));
+			PostToInstagram(TCHAR_TO_UTF8(TEXT("Checkout my new custom mold!")), TCHAR_TO_UTF8(*TexturePath));
 #endif
 		}
 		else
