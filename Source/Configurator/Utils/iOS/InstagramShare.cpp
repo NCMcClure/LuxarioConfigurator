@@ -104,7 +104,8 @@ static InstagramShare* sharedInstance = nil;
             if (placeholder != nil)
             {
                 NSLog(@"Configurator: 7");
-                NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat:@"instagram://library?LocalIdentifier=\%@", placeholder.localIdentifier]];
+                NSString *identifier = [placeholder localIdentifier];
+                NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat:@"instagram://library?LocalIdentifier=\%@", identifier]];
 
                 if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
                     NSLog(@"Configurator: 8");
