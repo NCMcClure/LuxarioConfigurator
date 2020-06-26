@@ -79,7 +79,7 @@ static InstagramShare* sharedInstance = nil;
 		NSURL* fileURL = [NSURL fileURLWithPath : [self photoFilePath] ];
 
 		self.dic = [UIDocumentInteractionController interactionControllerWithURL : fileURL];
-		self.dic.UTI = @"com.instagram.exclusivegram";
+		self.dic.UTI = @"com.instagram.photo";
 		self.dic.delegate = self;
 		if (message)
 			self.dic.annotation = [NSDictionary dictionaryWithObject : message forKey : @"InstagramCaption"];
