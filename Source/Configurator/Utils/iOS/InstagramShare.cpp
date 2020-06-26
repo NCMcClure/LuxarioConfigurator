@@ -96,7 +96,7 @@ static InstagramShare* sharedInstance = nil;
         }
         else {
             NSLog(@"error saving in camera roll : %@",error);
-	        }
+			        }
     }];
         
         return;
@@ -106,12 +106,14 @@ static InstagramShare* sharedInstance = nil;
 		NSURL* fileURL = [NSURL fileURLWithPath : [self photoFilePath] ];
 
 		self.dic = [UIDocumentInteractionController interactionControllerWithURL : fileURL];
-		self.dic.UTI = @"com.instagram.exclusivegram";
+		self.dic.UTI = @"com.instagram.photo";
 		self.dic.delegate = self;
 		if (message)
 			self.dic.annotation = [NSDictionary dictionaryWithObject : message forKey : @"InstagramCaption"];
 
-		[self.dic presentOpenInMenuFromRect : CGRectZero inView : nativeWindow.rootViewController.view animated : YES] ;
+		dispatch_async(dispatch_get_main_queue(), ^ {
+			[self.dic presentOpenInMenuFromRect : CGRectZero inView : nativeWindow.rootViewController.view animated : YES] ;
+		});
 	}
 	else
 	{
