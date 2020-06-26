@@ -9,16 +9,33 @@
 #if PLATFORM_IOS
 #import "InstagramShare.h"
 
+FString GetStorageFilePath(const FString& FileName)
+{
+	NString* NsFileName = [NSString stringWithUTF8String : TCHAR_TO_ANSI(*FileName)];
+	NSArray* DomainDirectories = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	NSString* DocumentsPath = [DomainDirectories firstObject];
+	NSString* OutputPath = [NSString stringWithFormat : @"%@/@", DocumentsPath, NsFileName];
+	return FString(OutputPath);
+}
+
 void IosDicInitialise()
 {
 	[[InstagramShare sharedInstance]handshake];
 }
 
-void PostToInstagram(const char* Message, const char* ImagePath)
+void PostToInstagram(const FString& Message, const FString& FilePath)
 {
-	NSString* m = [NSString stringWithUTF8String : Message];
-	NSString* i = [NSString stringWithUTF8String : ImagePath];
-	[[InstagramShare sharedInstance]postToInstagram:m WithImage : i];
+	NString* NsMessage = [NSString stringWithUTF8String : TCHAR_TO_ANSI(*Message)];
+	NString* NsFilePath = [NSString stringWithUTF8String : TCHAR_TO_ANSI(*FilePath)];
+
+	static bool bIosDicInitialised = false;
+	if (!bIosDicInitialised)
+	{
+		IosDicInitialise();
+		bIosDicInitialised = true;
+	}
+
+	[[InstagramShare sharedInstance]postToInstagram:NsMessage WithImage : NsFilePath];
 }
 
 @implementation InstagramShare

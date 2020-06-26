@@ -94,7 +94,7 @@
       public void run() {
       Intent share = new Intent(Intent.ACTION_SEND);
       share.setType(type);
-      File file = new File(getExternalFilesDir(null), mediaPath);
+      File file = new File(mediaPath);
       Uri uri = FileProvider.getUriForFile(getApplicationContext(), "com.luxario.configurator.fileprovider", file);
       share.putExtra(Intent.EXTRA_STREAM, uri);
       share.setPackage("com.instagram.android");

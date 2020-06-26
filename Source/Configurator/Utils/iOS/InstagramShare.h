@@ -16,7 +16,8 @@
 #import <Foundation/Foundation.h>
 
 void IosDicInitialise();
-void PostToInstagram(const char*, const char*);
+void PostToInstagram(const FString& Message, const FString& FilePath);
+FString GetStorageFilePath(const FString& FileName);
 
 @interface InstagramShare : NSObject <UIDocumentInteractionControllerDelegate>
 {

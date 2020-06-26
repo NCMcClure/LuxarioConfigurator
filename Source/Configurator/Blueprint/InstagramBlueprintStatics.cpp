@@ -6,8 +6,7 @@
 #include "Configurator/Utils/StbImageWrite.h"
 
 #if PLATFORM_ANDROID
-#include "Android/AndroidJNI.h"
-#include "Android/AndroidApplication.h"
+#include "Configurator/Utils/Android/InstagramShare.h"
 #elif PLATFORM_IOS
 #include "Configurator/Utils/iOS/InstagramShare.h"
 #endif
@@ -24,14 +23,8 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
 
 	FString TexturePath = TEXT("InstaOut.jpeg");
 	
-#if PLATFORM_ANDROID
-	extern FString GExternalFilePath;
-	TexturePath = FPaths::Combine(GExternalFilePath, TexturePath);
-#elif PLATFORM_IOS
-    NSArray *documentArr = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentPath = [documentArr firstObject];
-    NSString *path2 = [NSString stringWithFormat:@"%@/InstaOut.jpeg",documentPath];
-    TexturePath = FString(path2);
+#if PLATFORM_ANDROID || PLATFORM_IOS
+	TexturePath = GetStorageFilePath(TexturePath);
 #endif
 
 	const int32 Width = Texture->GetSizeX();
@@ -48,7 +41,7 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
 			{
 				for (int32 Y = 0; Y < Height; Y++)
 				{
-					int index = Y * Width + X;
+					const int32 index = Y * Width + X;
 					Pixels[index] = FormatedImageData[index];
 
 					OrderedPixelData[4 * index + 0] = Pixels[index].R;
@@ -63,23 +56,8 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
 			stbi_write_jpg(TCHAR_TO_UTF8(*TexturePath), Width, Height, 4, OrderedPixelData, 100);
 			const FString Type = "image/*";
 
-#if PLATFORM_ANDROID
-			if (JNIEnv* Env = FAndroidApplication::GetJavaEnv(true))
-			{
-				jstring JavaPath = Env->NewStringUTF(TCHAR_TO_UTF8(TEXT("InstaOut.jpeg")));
-				jstring JavaType = Env->NewStringUTF(TCHAR_TO_UTF8(*Type));
-
-				static jmethodID Method = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_CreateInstagramIntent", "(Ljava/lang/String;Ljava/lang/String;)V", false);
-				FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, Method, JavaType, JavaPath);
-			}
-#elif PLATFORM_IOS
-			static bool bIosDicInitialised = false;
-			if (!bIosDicInitialised)
-			{
-				IosDicInitialise();
-			}
-
-			PostToInstagram(TCHAR_TO_UTF8(TEXT("Checkout my new custom mold!")), TCHAR_TO_UTF8(*TexturePath));
+#if PLATFORM_ANDROID || PLATFORM_IOS
+			PostToInstagram("Checkout my new custom mold!", TexturePath);
 #endif
 		}
 		else
