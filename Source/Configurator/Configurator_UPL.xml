@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ Copyright (c) 2018 Nineva Studios
+ -->
+<root xmlns:android="http://schemas.android.com/apk/res/ios">
+    <init>
+        <log text="Configurator initialization"/>
+    </init>
+
+    <iosPListUpdates>
+        <addElements tag="dict">
+	        <key>NSPhotoLibraryUsageDescription</key>
+	        <string>$(PRODUCT_NAME) gallery use.</string>
+        </addElements>
+    </iosPListUpdates>
+    
+    <iosPListUpdates>
+        <addElements tag="dict">
+            <key>NSPhotoLibraryAddUsageDescription</key>
+            <string>$(PRODUCT_NAME) gallery use.</string>
+        </addElements>
+    </iosPListUpdates>
+</root>

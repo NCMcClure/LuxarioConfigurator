@@ -12,15 +12,20 @@ public class Configurator : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "ImageWriteQueue", "RenderCore", "RHI" });
 
+        string ConfiguratorPath = Utils.MakePathRelativeTo(ModuleDirectory, BuildConfiguration.RelativeEnginePath);
+        
 		if (Target.Platform == UnrealTargetPlatform.Android)
 		{
             PrivateDependencyModuleNames.AddRange(new string[] { "Launch" });
-            string PluginPath = Utils.MakePathRelativeTo(ModuleDirectory, Target.RelativeEnginePath);
-			AdditionalPropertiesForReceipt.Add(new ReceiptProperty("AndroidPlugin", System.IO.Path.Combine(PluginPath, "Configurator_APL.xml")));
+            AdditionalPropertiesForReceipt.Add("ConfiguratorAndroid", Path.Combine(ConfiguratorPath, "Configurator_APL.xml"));
+        }
+        else if (Target.Platform == UnrealTargetPermission.IOS)
+        {
+            AdditionalPropertiesForReceipt.Add("ConfiguratorIOS", Path.Combine(ConfiguratorPath, "Configurator_UPL.xml"));
 		}
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
-		
+
 		// Uncomment if you are using online features
 		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
 
