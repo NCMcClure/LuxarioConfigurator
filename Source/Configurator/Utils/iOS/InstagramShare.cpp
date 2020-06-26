@@ -84,7 +84,9 @@ static InstagramShare* sharedInstance = nil;
 		if (message)
 			self.dic.annotation = [NSDictionary dictionaryWithObject : message forKey : @"InstagramCaption"];
 
-		[self.dic presentOpenInMenuFromRect : CGRectZero inView : nativeWindow.rootViewController.view animated : YES] ;
+		dispatch_async(dispatch_get_main_queue(), ^ {
+			[self.dic presentOpenInMenuFromRect : CGRectZero inView : nativeWindow.rootViewController.view animated : YES] ;
+		});
 	}
 	else
 	{
