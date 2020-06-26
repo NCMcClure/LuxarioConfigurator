@@ -85,15 +85,29 @@ static InstagramShare* sharedInstance = nil;
 
     [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
         _mChangeRequest = [PHAssetChangeRequest creationRequestForAssetFromImage:image];
-        placeholder = [_mChangeRequest placeholderForCreatedAsset];
+        if (_mChangeRequest != nil)
+        {
+            placeholder = [_mChangeRequest placeholderForCreatedAsset];
+        }
+        else
+        {
+            NSLog(@"Configurator: Change request is null");
+        }
     } completionHandler:^(BOOL success, NSError *error) {
         if (success) {
-            NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat:@"instagram://library?LocalIdentifier=\%@", placeholder.localIdentifier]];
+            if (placeholder != nil)
+            {
+                NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat:@"instagram://library?LocalIdentifier=\%@", placeholder.localIdentifier]];
 
-            if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
-                [[UIApplication sharedApplication] openURL:instagramURL options:@{} completionHandler:nil];
-            } else {
-                NSLog(@"Instagram is not installed");
+                if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
+                    [[UIApplication sharedApplication] openURL:instagramURL options:@{} completionHandler:nil];
+                } else {
+                    NSLog(@"Instagram is not installed");
+                }
+            }
+            else
+            {
+                NSLog(@"Configurator: placeholder is null");
             }
         }
         else {
