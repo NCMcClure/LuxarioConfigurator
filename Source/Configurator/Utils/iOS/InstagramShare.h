@@ -30,7 +30,6 @@ FString GetStorageFilePath(const FString& FileName);
 
 -(void)handshake;
 -(void)postToInstagram:(NSString*)message WithImage : (NSString*)imagePath;
-
 @end
 #endif
 

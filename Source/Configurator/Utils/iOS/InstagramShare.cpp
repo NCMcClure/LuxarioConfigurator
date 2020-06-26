@@ -8,6 +8,9 @@
 
 #if PLATFORM_IOS
 #import "InstagramShare.h"
+#import <Photos/Photos.h>
+
+
 
 FString GetStorageFilePath(const FString& FileName)
 {
@@ -73,7 +76,31 @@ static InstagramShare* sharedInstance = nil;
 	{
 		// Image
 		UIImage* image = [UIImage imageWithContentsOfFile : imagePath];
+        
+//////////////////////////////////////////////////
+    __block PHAssetChangeRequest *_mChangeRequest = nil;
+    __block PHObjectPlaceholder *placeholder;
 
+    [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+        _mChangeRequest = [PHAssetChangeRequest creationRequestForAssetFromImage:image];
+        placeholder = _mChangeRequest.placeholderForCreatedAsset;
+    } completionHandler:^(BOOL success, NSError *error) {
+        if (success) {
+            NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat:@"instagram://library?LocalIdentifier=\%@", [placeholder localIdentifier]]];
+
+            if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
+                [[UIApplication sharedApplication] openURL:instagramURL options:@{} completionHandler:nil];
+            } else {
+                NSLog(@"Instagram is not installed");
+            }
+        }
+        else {
+            NSLog(@"error saving in camera roll : %@",error);
+	        }
+    }];
+        
+        return;
+///////////////////////////////////////////////////////
 		// Post
 		[UIImageJPEGRepresentation(image, 1.0) writeToFile:[self photoFilePath] atomically : YES] ;
 		NSURL* fileURL = [NSURL fileURLWithPath : [self photoFilePath] ];
