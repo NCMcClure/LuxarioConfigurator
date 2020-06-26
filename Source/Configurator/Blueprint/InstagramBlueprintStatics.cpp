@@ -8,23 +8,11 @@
 #if PLATFORM_ANDROID
 #include "Android/AndroidJNI.h"
 #include "Android/AndroidApplication.h"
-#endif
-
-#if PLATFORM_IOS
-#import <Foundation/Foundation.h>
-#import <MobileCoreServices/MobileCoreServices.h>
-#import "InstagramShare.h"
-#include "IOS/IOSAppDelegate.h"
+#elif PLATFORM_IOS
+#include "Configurator/Utils/iOS/InstagramShare.h"
 #endif
 
 #include "Engine/Texture2D.h"
-
-#if PLATFORM_IOS
-static NSString *const kInstagramCommentKey = @"InstagramCaption";
-static NSString *const kInstagramUTI = @"com.instagram.exclusivegram";
-static CGFloat const kInstagramImageSize = 612.0;
-static UIDocumentInteractionController* InteractionController;
-#endif
 
 void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
 {
@@ -39,15 +27,10 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
 #if PLATFORM_ANDROID
 	extern FString GExternalFilePath;
 	TexturePath = FPaths::Combine(GExternalFilePath, TexturePath);
-#endif
-
-#if PLATFORM_IOS
+#elif PLATFORM_IOS
     NSArray *documentArr = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-
     NSString *documentPath = [documentArr firstObject];
-
     NSString *path2 = [NSString stringWithFormat:@"%@/InstaOut.jpeg",documentPath];
-
     TexturePath = FString(path2);
 #endif
 
@@ -89,63 +72,14 @@ void UInstagramBlueprintStatics::ShareToInstagram(class UTexture2D* Texture)
 				static jmethodID Method = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_CreateInstagramIntent", "(Ljava/lang/String;Ljava/lang/String;)V", false);
 				FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, Method, JavaType, JavaPath);
 			}
-#endif
-#if PLATFORM_IOS
-            NSString *nsTexturePath = [NSString stringWithUTF8String:TCHAR_TO_ANSI(*TexturePath)];
-            
-            UIImage *image = [UIImage imageWithContentsOfFile:nsTexturePath];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [[InstagramSharing sharedData] instaGramWallPost:nsTexturePath inView: [IOSAppDelegate GetDelegate].RootView];
+#elif PLATFORM_IOS
+			static bool bIosDicInitialised = false;
+			if (!bIosDicInitialised)
+			{
+				IosDicInitialise();
+			}
 
-                /*
-                UIView *view = [IOSAppDelegate GetDelegate].RootView;
-                NSString *instagramFileName = [[@"instagram" stringByDeletingPathExtension] stringByAppendingString:@".ig"];
-                NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-                NSString *documentsPath = [paths objectAtIndex:0]; //Get the docs directory
-                NSString *instagramFilePath = [documentsPath stringByAppendingPathComponent:instagramFileName];
-                
-                //Resize image to 612 x 612 (min required by instagram)
-                UIGraphicsBeginImageContext(CGSizeMake(kInstagramImageSize, kInstagramImageSize));
-                [image drawInRect:CGRectMake(0,0,kInstagramImageSize,kInstagramImageSize)];
-                UIImage* instagramImage = UIGraphicsGetImageFromCurrentImageContext();
-                UIGraphicsEndImageContext();
-                
-                //Save to disk
-                BOOL savedSuccess = [UIImagePNGRepresentation(instagramImage) writeToFile:instagramFilePath atomically:YES];
-                
-                //If successfully saved
-                if (savedSuccess)
-                {
-                    //Create document controller with instagram file
-                    InteractionController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:instagramFilePath]];
-                    UIDocumentInteractionController *documentInteractionController = InteractionController;
-                    documentInteractionController.UTI = kInstagramUTI;
-                    documentInteractionController.annotation = @"My new custom mold";
-                    [documentInteractionController presentOpenInMenuFromRect:CGRectZero inView:view animated:YES];
-                }
-                else{
-                    NSLog(@"Error - Error saving instagram photo to disk");
-                }
-                 */
-            });
-            /*
-             Old approach
-            NSURL* ImageUrl = [NSURL URLWithString : [NSString stringWithFormat : @"file://%@", nsTexturePath] ];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                    // Initialize Document Interaction Controller
-                UIDocumentInteractionController* documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:ImageUrl];
-             
-                    // Configure Document Interaction Controller
-                    //[self.documentInteractionController setDelegate:self];
-                documentInteractionController.UTI = @"com.instagram.exclusivegram";
-
-                UIView *view = [IOSAppDelegate GetDelegate].RootView;
-                    // Preview PDF
-                [documentInteractionController presentOpenInMenuFromRect:CGRectZero inView:view animated:YES ];
-            });
-             */
+			PostToInstagram(TCHAR_TO_UTF8(TEXT("Checkout my new custom mold!"), TCHAR_TO_UTF8(*TexturePath));
 #endif
 		}
 		else
