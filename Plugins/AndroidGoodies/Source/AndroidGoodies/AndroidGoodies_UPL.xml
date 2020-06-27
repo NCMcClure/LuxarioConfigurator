@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+    Copyright (c) 2018 Nineva Studios
+-->
+<root xmlns:android="http://schemas.android.com/apk/res/android">
+	
+  <init>
+		<log text="AndroidGoodies initialization!"/>
+    <setStringFromProperty result="DrawablePathToEdit" ini="Engine" section="/Script/AndroidGoodies.AndroidGoodiesSettings" property="AndroidDrawablesFolder" default="$S(PluginDir)/Resources"/>
+    <setStringReplace result="HalfwayEditedDrawablePath" source="$S(DrawablePathToEdit)" find="(Path=&quot;" with=""/>
+    <setStringReplace result="DrawableDir" source="$S(HalfwayEditedDrawablePath)" find="&quot;)" with=""/>
+    <setBoolFromProperty result="SendSmsPermission" ini="Engine" section="/Script/AndroidGoodies.AndroidGoodiesSettings" property="sendSmsPermission" default="false"/>
+    <setBoolFromProperty result="SetAlarmPermission" ini="Engine" section="/Script/AndroidGoodies.AndroidGoodiesSettings" property="setAlarmPermission" default="false"/>
+    <setBoolFromProperty result="CameraPermission" ini="Engine" section="/Script/AndroidGoodies.AndroidGoodiesSettings" property="cameraPermission" default="false"/>
+    <setBoolFromProperty result="FlashlightPermission" ini="Engine" section="/Script/AndroidGoodies.AndroidGoodiesSettings" property="flashlightPermission" default="false"/>
+    <setBoolFromProperty result="VibratePermission" ini="Engine" section="/Script/AndroidGoodies.AndroidGoodiesSettings" property="vibratePermission" default="false"/>
+    <setBoolFromProperty result="CallPhonePermission" ini="Engine" section="/Script/AndroidGoodies.AndroidGoodiesSettings" property="callPhonePermission" default="false"/>
+    <setBoolFromProperty result="ReadPhoneStatePermission" ini="Engine" section="/Script/AndroidGoodies.AndroidGoodiesSettings" property="readPhoneStatePermission" default="false"/>
+    <setBoolFromProperty result="ReadContactsPermission" ini="Engine" section="/Script/AndroidGoodies.AndroidGoodiesSettings" property="readContactsPermission" default="false"/>
+    <setBoolFromProperty result="WriteContactsPermission" ini="Engine" section="/Script/AndroidGoodies.AndroidGoodiesSettings" property="writeContactsPermission" default="false"/>
+	</init>
+
+	<prebuildCopies>
+		<copyDir src="$S(PluginDir)/Private/Java" dst="$S(BuildDir)/src/com/ninevastudios/androidgoodies" />
+		<copyDir src="$S(PluginDir)/Private/Xml" dst="$S(BuildDir)/res/xml" />
+		<copyDir src="$S(DrawableDir)" dst="$S(BuildDir)/res/drawable" />
+	</prebuildCopies>
+
+  <!-- optional additions to proguard -->
+	<proguardAdditions>
+		<insert>
+      -keep public class com.ninevastudios.androidgoodies.** { public protected *; }
+      -keep public class android.support.v4.app.** { public protected *; }
+      -keep public interface android.support.v4.app.** { public protected *; }
+      -keep public class android.support.v7.** { public protected *; }
+      -keep public interface android.support.v7.** { public protected *; }
+    </insert>
+	</proguardAdditions>
+
+	<!-- optional updates applied to AndroidManifest.xml -->
+	<androidManifestUpdates>
+    <if condition="SendSmsPermission">
+      <true>
+        <addPermission android:name="android.permission.SEND_SMS"/>
+      </true>
+    </if>
+    <if condition="SetAlarmPermission">
+      <true>
+        <addPermission android:name="com.android.alarm.permission.SET_ALARM"/>
+      </true>
+    </if>
+    <if condition="CameraPermission">
+      <true>
+        <addPermission android:name="android.permission.CAMERA"/>
+      </true>
+    </if>
+    <if condition="FlashlightPermission">
+      <true>
+        <addPermission android:name="android.permission.FLASHLIGHT"/>
+      </true>
+    </if>
+    <if condition="VibratePermission">
+      <true>
+        <addPermission android:name="android.permission.VIBRATE"/>
+      </true>
+    </if>
+    <if condition="CallPhonePermission">
+      <true>
+        <addPermission android:name="android.permission.CALL_PHONE"/>
+      </true>
+    </if>
+    <if condition="ReadPhoneStatePermission">
+      <true>
+        <addPermission android:name="android.permission.READ_PHONE_STATE"/>
+      </true>
+    </if>
+    <if condition="ReadContactsPermission">
+      <true>
+        <addPermission android:name="android.permission.READ_CONTACTS"/>
+      </true>
+    </if>
+    <if condition="WriteContactsPermission">
+      <true>
+        <addPermission android:name="android.permission.WRITE_CONTACTS"/>
+      </true>
+    </if>
+    
+		<setStringFromAttribute result="PackageName" tag="manifest" name="package"/>
+		<setElement result="AGProvider" value="provider" />
+		<addAttribute tag="$AGProvider" name="android:name" value="com.ninevastudios.androidgoodies.AGFileProvider" />
+		<addAttribute tag="$AGProvider" name="android:authorities" value="$S(PackageName).AGFileProvider" />
+		<addAttribute tag="$AGProvider" name="android:exported" value="false" />
+		<addAttribute tag="$AGProvider" name="android:grantUriPermissions" value="true" />
+
+		<setElement result="AGProviderMeta" value="meta-data" />
+		<addAttribute tag="$AGProviderMeta" name="android:name" value="android.support.FILE_PROVIDER_PATHS" />
+		<addAttribute tag="$AGProviderMeta" name="android:resource" value="@xml/provider_paths" />
+		<addElement tag="$AGProvider" name="AGProviderMeta" />
+
+		<addElement tag="application" name="AGProvider" />
+		
+		<addElements tag="application">
+			<activity android:name="com.ninevastudios.androidgoodies.AndroidGoodiesActivity" 
+                android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+      <activity android:name="com.ninevastudios.androidgoodies.AGNotificationLaunchActivity"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+      <receiver android:name="com.ninevastudios.androidgoodies.NotificationBroadcastReceiver"/>
+		</addElements>
+	</androidManifestUpdates>
+
+	<buildGradleAdditions>
+		<insert>
+			dependencies {
+				implementation 'com.android.support:exifinterface:28.0.0'
+        implementation 'com.android.support:support-v4:28.0.0'
+        implementation 'com.android.support:appcompat-v7:28.0.0'
+			}
+			repositories {
+				maven {
+					url 'https://maven.google.com'
+				}
+			}
+		</insert>
+	</buildGradleAdditions>
+		
+</root>
