@@ -10,7 +10,6 @@
 #import "InstagramShare.h"
 #import <Photos/Photos.h>
 
-static PHObjectPlaceholder *placeholder = nil;
 
 FString GetStorageFilePath(const FString& FileName)
 {
@@ -75,106 +74,43 @@ static InstagramShare* sharedInstance = nil;
 	if ([[UIApplication sharedApplication]canOpenURL:appURL] )
 	{
         dispatch_async(dispatch_get_main_queue(), ^ {
+            UIImage* image = [UIImage imageWithContentsOfFile : imagePath];
+            __block PHAssetChangeRequest* ChangeRequest = nil;
+            __block PHObjectPlaceholder* Placeholder = nil;
+            __block NSString* PlaceholderIdentifier = nil;
 
-		// Image
-		UIImage* image = [UIImage imageWithContentsOfFile : imagePath];
-        
-//////////////////////////////////////////////////
-    __block PHAssetChangeRequest *_mChangeRequest = nil;
-
-    [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
-        NSLog(@"Configurator: 1");
-        _mChangeRequest = [PHAssetChangeRequest creationRequestForAssetFromImage:image];
-        NSLog(@"Configurator: 2");
-        if (_mChangeRequest != nil)
-        {
-            NSLog(@"Configurator: 3");
-            placeholder = [_mChangeRequest placeholderForCreatedAsset];
-            NSLog(@"Configurator: 4");
-			NSLog(@"Configurator: placeholder -> %@", placeholder);
-			NSLog(@"Configurator: id -> %@", [placeholder localIdentifier]);
-			NSString *identifier = [placeholder localIdentifier];
-            NSLog(@"Configurator: identifier -> %@", identifier);
-            NSURL* instagramURL = [NSURL URLWithString : [NSString stringWithFormat : @"instagram://library?LocalIdentifier=\%@", identifier] ];
-
-            if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
-                NSLog(@"Configurator: 8");
-                [[UIApplication sharedApplication] openURL:instagramURL options:@{} completionHandler:nil];
-                NSLog(@"Configurator: 9");
-            } else {
-                NSLog(@"Instagram is not installed");
-            }
-        }
-        else
-        {
-            NSLog(@"Configurator: Change request is null");
-        }
-    } completionHandler:^(BOOL success, NSError *error) {
-        //NSLog(@"Configurator: 5");
-        if (success) {
-            //NSLog(@"Configurator: 6");
-            //if (placeholder != nil)
-            //{
-                //NSLog(@"Configurator: 7");
-				//NSLog(@"Configurator: placeholder -> %@", placeholder);
-                //NSString *identifier = [placeholder localIdentifier];
-                //NSLog(@"Configurator: identifier -> %@", identifier);
-                //NSURL* instagramURL = [NSURL URLWithString : [NSString stringWithFormat : @"instagram://library?LocalIdentifier=\%@", identifier] ];
-
-                //if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
-                //    NSLog(@"Configurator: 8");
-                //    [[UIApplication sharedApplication] openURL:instagramURL options:@{} completionHandler:nil];
-                //    NSLog(@"Configurator: 9");
-                //} else {
-                //    NSLog(@"Instagram is not installed");
-                //}
-            //}
-            //else
-            //
-                //NSLog(@"Configurator: placeholder is null");
-            //}
-        }
-        else {
-            NSLog(@"error saving in camera roll : %@",error);
-			        }
-    }];
+            [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+                ChangeRequest = [PHAssetChangeRequest creationRequestForAssetFromImage:image];
+                if (ChangeRequest != nil)
+                {
+                    NSLog(@"Configurator: 3");
+                    Placeholder = [ChangeRequest placeholderForCreatedAsset];
+                    PlaceholderIdentifier = [Placeholder localIdentifier];
+                }
+                else
+                {
+                    NSLog(@"Configurator: Change request is null");
+                }
+            } completionHandler:^(BOOL success, NSError *error) {
+                if (success) {
+                    NSURL* InstagramURL = [NSURL URLWithString : [NSString stringWithFormat : @"instagram://library?LocalIdentifier=\%@", PlaceholderIdentifier] ];
+                    if ([[UIApplication sharedApplication] canOpenURL:InstagramURL]) {
+                        [[UIApplication sharedApplication] openURL:InstagramURL options:@{} completionHandler:nil];
+                    } else {
+                        NSLog(@"Instagram is not installed");
+                    }
+                }
+                else {
+                    NSLog(@"error saving in camera roll : %@",error);
+                }
+            }];
         });
-        
-        /*
-        return;
-///////////////////////////////////////////////////////
-		// Post
-		[UIImageJPEGRepresentation(image, 1.0) writeToFile:[self photoFilePath] atomically : YES] ;
-		NSURL* fileURL = [NSURL fileURLWithPath : [self photoFilePath] ];
-
-		self.dic = [UIDocumentInteractionController interactionControllerWithURL : fileURL];
-		self.dic.UTI = @"com.instagram.photo";
-		self.dic.delegate = self;
-		if (message)
-			self.dic.annotation = [NSDictionary dictionaryWithObject : message forKey : @"InstagramCaption"];
-
-		dispatch_async(dispatch_get_main_queue(), ^ {
-			[self.dic presentOpenInMenuFromRect : CGRectZero inView : nativeWindow.rootViewController.view animated : YES] ;
-		});
-         */
 	}
 	else
 	{
 		NSLog(@"Instagram not installed!");
 	}
 }	
-
--(NSString*)photoFilePath
-{
-	return[NSString stringWithFormat : @"%@/%@", [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"], @"tempinstgramphoto.ig"];
-}
-
--(UIDocumentInteractionController*)setupControllerWithURL:(NSURL*)fileURL usingDelegate : (id<UIDocumentInteractionControllerDelegate>)interactionDelegate
-{
-	UIDocumentInteractionController* interactionController = [UIDocumentInteractionController interactionControllerWithURL : fileURL];
-	interactionController.delegate = interactionDelegate;
-	return interactionController;
-}
 
 @end
 #endif
