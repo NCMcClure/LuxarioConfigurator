@@ -10,6 +10,7 @@
 #import "InstagramShare.h"
 #import <Photos/Photos.h>
 
+static NSString* PlaceholderIdentifier = nil;
 
 FString GetStorageFilePath(const FString& FileName)
 {
@@ -77,7 +78,6 @@ static InstagramShare* sharedInstance = nil;
             UIImage* image = [UIImage imageWithContentsOfFile : imagePath];
             __block PHAssetChangeRequest* ChangeRequest = nil;
             __block PHObjectPlaceholder* Placeholder = nil;
-            __block NSString* PlaceholderIdentifier = nil;
 
             [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
                 ChangeRequest = [PHAssetChangeRequest creationRequestForAssetFromImage:image];
@@ -92,6 +92,11 @@ static InstagramShare* sharedInstance = nil;
                     NSLog(@"Configurator: Change request is null");
                 }
             } completionHandler:^(BOOL success, NSError *error) {
+                if (PlaceholderIdentifier == nil)
+                {
+                    NSLog(@"Configurator: placeholderIdentifier is nil.");
+                    return;
+                }
                 if (success) {
                     NSURL* InstagramURL = [NSURL URLWithString : [NSString stringWithFormat : @"instagram://library?LocalIdentifier=\%@", PlaceholderIdentifier] ];
                     if ([[UIApplication sharedApplication] canOpenURL:InstagramURL]) {
