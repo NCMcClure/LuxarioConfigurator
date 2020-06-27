@@ -69,44 +69,68 @@ static InstagramShare* sharedInstance = nil;
 
 -(void)postToInstagram:(NSString*)message WithImage : (NSString*)imagePath;
 {
-	NSURL* appURL = [NSURL URLWithString : @"instagram://app"];
-	if ([[UIApplication sharedApplication]canOpenURL:appURL] )
-	{
-        dispatch_async(dispatch_get_main_queue(), ^ {
-            UIImage* image = [UIImage imageWithContentsOfFile : imagePath];
-            __block PHAssetChangeRequest* ChangeRequest = nil;
-            __block PHObjectPlaceholder* Placeholder = nil;
+    void (^Post)() = ^() {
+        NSURL* appURL = [NSURL URLWithString : @"instagram://app"];
+        if ([[UIApplication sharedApplication]canOpenURL:appURL] )
+        {
+            dispatch_async(dispatch_get_main_queue(), ^ {
+                UIImage* image = [UIImage imageWithContentsOfFile : imagePath];
+                __block PHAssetChangeRequest* ChangeRequest = nil;
+                __block PHObjectPlaceholder* Placeholder = nil;
 
-            [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
-                ChangeRequest = [PHAssetChangeRequest creationRequestForAssetFromImage:image];
-                if (ChangeRequest != nil)
-                {
-                    Placeholder = [ChangeRequest placeholderForCreatedAsset];
-                    NSURL* InstagramURL = [NSURL URLWithString : [NSString stringWithFormat : @"instagram://library?LocalIdentifier=\%@", [Placeholder localIdentifier]] ];
-                    if ([[UIApplication sharedApplication] canOpenURL:InstagramURL]) {
-                        [[UIApplication sharedApplication] openURL:InstagramURL options:@{} completionHandler:nil];
-                    } else {
-                        NSLog(@"Instagram is not installed");
+                [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+                    ChangeRequest = [PHAssetChangeRequest creationRequestForAssetFromImage:image];
+                    if (ChangeRequest != nil)
+                    {
+                        Placeholder = [ChangeRequest placeholderForCreatedAsset];
+                        NSURL* InstagramURL = [NSURL URLWithString : [NSString stringWithFormat : @"instagram://library?LocalIdentifier=\%@", [Placeholder localIdentifier]] ];
+                        if ([[UIApplication sharedApplication] canOpenURL:InstagramURL]) {
+                            [[UIApplication sharedApplication] openURL:InstagramURL options:@{} completionHandler:nil];
+                        } else {
+                            NSLog(@"Instagram is not installed");
+                        }
+
                     }
+                    else
+                    {
+                        NSLog(@"Configurator: Change request is null");
+                    }
+                } completionHandler:^(BOOL success, NSError *error) {
+                    if (success) {
+                    }
+                    else {
+                        NSLog(@"error saving in camera roll : %@",error);
+                    }
+                }];
+            });
+        }
+        else
+        {
+            NSLog(@"Instagram not installed!");
+        }
+    };
+    PHAuthorizationStatus authStatus = [PHPhotoLibrary authorizationStatus];
+    if (authStatus == PHAuthorizationStatusAuthorized)
+    {
+        NSLog(@"Configurator: Permissions already granted");
+        Post();
+    }
+    else
+    {
+        NSLog(@"Configurator: Asking for permissions");
+        [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+            if (authStatus == PHAuthorizationStatusAuthorized)
+            {
+                NSLog(@"Configurator: Permissions granted!");
+                Post();
+            }
+            else
+            {
+                NSLog(@"Configurator: Permission denied, cannot post");
+            }
+        }];
+    }
 
-                }
-                else
-                {
-                    NSLog(@"Configurator: Change request is null");
-                }
-            } completionHandler:^(BOOL success, NSError *error) {
-                if (success) {
-                }
-                else {
-                    NSLog(@"error saving in camera roll : %@",error);
-                }
-            }];
-        });
-	}
-	else
-	{
-		NSLog(@"Instagram not installed!");
-	}
 }	
 
 @end
