@@ -94,6 +94,14 @@ class UTexture2D* UInstagramBlueprintStatics::CropTexture(class UTexture2D* Text
 	return Out;
 }
 
+bool UInstagramBlueprintStatics::IsInstagramAvailable()
+{
+#if PLATFORM_ANDROID || PLATFORM_IOS
+	return IsInstagramInstalled();
+#endif
+	return false;
+}
+
 TArray<FColor> UInstagramBlueprintStatics::GetTextureColorData(class UTexture2D* Texture)
 {
 	TArray<FColor> Pixels;

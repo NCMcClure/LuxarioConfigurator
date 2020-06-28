@@ -4,5 +4,6 @@
 
 FString GetStorageFilePath(const FString& FileName);
 void PostToInstagram(const FString& Message, const FString& Path);
+bool IsInstagramInstalled();
 
 #endif

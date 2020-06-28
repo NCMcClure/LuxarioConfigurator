@@ -32,4 +32,22 @@ void PostToInstagram(const FString& Message, const FString& Path)
 	}
 }
 
+bool IsInstagramInstalled()
+{
+	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv(true))
+	{
+		static jmethodID Method = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_IsInstagramInstalled", "()Z", false);
+		if (Method != 0)
+		{
+			return FJavaWrapper::CallBooleanMethod(Env, FJavaWrapper::GameActivityThis, Method);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("PostToInstagram: Couldn't find method AndroidThunkJava_IsInstagramInstalled!"));
+		}
+	}
+
+	return false;
+}
+
 #endif

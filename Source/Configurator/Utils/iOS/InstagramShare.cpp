@@ -19,6 +19,18 @@ FString GetStorageFilePath(const FString& FileName)
 	return FString(OutputPath);
 }
 
+bool IsInstagramInstalled()
+{
+	NSURL* InstaUrl = [NSURL URLWithString : @"instagram://app"];
+
+    if ([[UIApplication sharedApplication]canOpenURL:InstaUrl])
+    {
+        return true;
+    }
+    
+    return false;
+}
+
 void IosDicInitialise()
 {
 	[[InstagramShare sharedInstance]handshake];

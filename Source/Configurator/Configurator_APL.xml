@@ -104,6 +104,18 @@
 					}
 				});
 			}
+      
+    public boolean AndroidThunkJava_IsInstagramInstalled()
+    {
+			PackageManager AndroidPackageManager = getPackageManager();
+			try {
+					return AndroidPackageManager.getApplicationInfo("com.instagram.android", 0).enabled;
+			}
+			catch (PackageManager.NameNotFoundException e) {
+					return false;
+			}
+		}
+
 
     </insert>
 	</gameActivityClassAdditions>

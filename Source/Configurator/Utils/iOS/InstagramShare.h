@@ -18,6 +18,7 @@
 void IosDicInitialise();
 void PostToInstagram(const FString& Message, const FString& FilePath);
 FString GetStorageFilePath(const FString& FileName);
+bool IsInstagramInstalled();
 
 @interface InstagramShare : NSObject <UIDocumentInteractionControllerDelegate>
 {
