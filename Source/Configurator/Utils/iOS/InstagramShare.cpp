@@ -126,7 +126,7 @@ static InstagramShare* sharedInstance = nil;
                 {
                     Placeholder = [ChangeRequest placeholderForCreatedAsset];
                     MyManager *sharedManager = [MyManager sharedManager];
-                    sharedManager.url = [NSURL URLWithString : [NSString stringWithFormat : @"instagram://library?LocalIdentifier=\%@", [Placeholder localIdentifier]]];
+                    sharedManager.url = [NSURL URLWithString : [NSString stringWithFormat : @"instagram://library?LocalIdentifier=\%@", [[Placeholder localIdentifier] substringToIndex:36]]];
                     NSLog(@"Configurator: Placeholder -> %@", Placeholder);
                     NSLog(@"Configurator: Share URL -> %@", sharedManager.url);
                 }
@@ -138,8 +138,9 @@ static InstagramShare* sharedInstance = nil;
                 if (success) {
                     dispatch_async(dispatch_get_main_queue(), ^ {
                         MyManager *sharedManager = [MyManager sharedManager];
+                        NSLog(@"Configurator: Opening url -> %@", sharedManager.url);
                         if ([[UIApplication sharedApplication] canOpenURL:sharedManager.url]) {
-                            [[UIApplication sharedApplication] openURL:InstagramURL options:@{} completionHandler:nil];
+                            [[UIApplication sharedApplication] openURL:sharedManager.url options:@{} completionHandler:nil];
                         } else {
                             NSLog(@"Instagram is not installed");
                         }
