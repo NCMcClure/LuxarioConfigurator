@@ -22,7 +22,7 @@ bool IsInstagramInstalled();
 
 @interface InstagramShare : NSObject <UIDocumentInteractionControllerDelegate>
 {
-	UIWindow* nativeWindow;
+    UIWindow* nativeWindow;
 }
 
 @property(nonatomic, retain) UIDocumentInteractionController* dic;
@@ -32,6 +32,17 @@ bool IsInstagramInstalled();
 -(void)handshake;
 -(void)postToInstagram:(NSString*)message WithImage : (NSString*)imagePath;
 @end
+
+@interface MyManager : NSObject {
+    NSURL* url;
+}
+
+@property (nonatomic, retain) NSURL* url;
+
++ (id)sharedManager;
+
+@end
+
 #endif
 
 #endif /* InstagramShare_h */
