@@ -22,7 +22,8 @@
 				"Win64",
 				"Win32",
 				"Mac",
-				"IOS"
+				"IOS",
+				"Linux"
 			]
 		}
 	]

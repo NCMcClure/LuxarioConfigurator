@@ -10,11 +10,22 @@ public class Configurator : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
+		PrivateDependencyModuleNames.AddRange(new string[] { "ImageWriteQueue", "RenderCore", "RHI" });
 
+        string ConfiguratorPath = Utils.MakePathRelativeTo(ModuleDirectory, Target.RelativeEnginePath);
+        
+		if (Target.Platform == UnrealTargetPlatform.Android)
+		{
+            PrivateDependencyModuleNames.AddRange(new string[] { "Launch" });
+            AdditionalPropertiesForReceipt.Add("AndroidPlugin", System.IO.Path.Combine(ConfiguratorPath, "Configurator_APL.xml"));
+        }
+        else if (Target.Platform == UnrealTargetPlatform.IOS)
+        {
+            AdditionalPropertiesForReceipt.Add("IOSPlugin", System.IO.Path.Combine(ConfiguratorPath, "Configurator_UPL.xml"));
+		}
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
-		
+
 		// Uncomment if you are using online features
 		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
 
