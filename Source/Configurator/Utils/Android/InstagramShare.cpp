@@ -21,7 +21,14 @@ void PostToInstagram(const FString& Message, const FString& Path)
 		jstring JavaType = Env->NewStringUTF(TCHAR_TO_UTF8(*Type));
 
 		static jmethodID Method = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_CreateInstagramIntent", "(Ljava/lang/String;Ljava/lang/String;)V", false);
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, Method, JavaType, JavaPath);
+		if (Method != 0)
+		{
+			FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, Method, JavaType, JavaPath);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("PostToInstagram: Couldn't find method AndroidThunkJava_CreateInstagramIntent!"));
+		}
 	}
 }
 

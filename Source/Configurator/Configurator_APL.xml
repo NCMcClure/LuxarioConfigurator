@@ -87,23 +87,23 @@
       *    createInstagramIntent(type, mediaPath);
       */
 
-      public void AndroidThunkJava_CreateInstagramIntent(final String type, final String mediaPath)
-      {
-      runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-      Intent share = new Intent(Intent.ACTION_SEND);
-      share.setType(type);
-      File file = new File(mediaPath);
-      Uri uri = FileProvider.getUriForFile(getApplicationContext(), "com.luxario.configurator.fileprovider", file);
-      share.putExtra(Intent.EXTRA_STREAM, uri);
-      share.setPackage("com.instagram.android");
-      Intent newIntent = Intent.createChooser(share, "Share to");
-      newIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-      startActivity(newIntent);
-      }
-      });
-      }
+			public void AndroidThunkJava_CreateInstagramIntent(final String MediaType, final String MediaPath)
+			{
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						Intent Share = new Intent(Intent.ACTION_SEND);
+						Share.setType(MediaType);
+						File MediaFile = new File(MediaPath);
+						Uri MediaUri = FileProvider.getUriForFile(getApplicationContext(), "com.luxario.configurator.fileprovider", MediaFile);
+						Share.putExtra(Intent.EXTRA_STREAM, MediaUri);
+						Share.setPackage("com.instagram.android");
+						Intent ShareToIntent = Intent.createChooser(Share, "Share to");
+						ShareToIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+						startActivity(ShareToIntent);
+					}
+				});
+			}
 
     </insert>
 	</gameActivityClassAdditions>

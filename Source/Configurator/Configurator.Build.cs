@@ -17,11 +17,11 @@ public class Configurator : ModuleRules
 		if (Target.Platform == UnrealTargetPlatform.Android)
 		{
             PrivateDependencyModuleNames.AddRange(new string[] { "Launch" });
-            AdditionalPropertiesForReceipt.Add("ConfiguratorAndroid", System.IO.Path.Combine(ConfiguratorPath, "Configurator_APL.xml"));
+            AdditionalPropertiesForReceipt.Add("AndroidPlugin", System.IO.Path.Combine(ConfiguratorPath, "Configurator_APL.xml"));
         }
         else if (Target.Platform == UnrealTargetPlatform.IOS)
         {
-            AdditionalPropertiesForReceipt.Add("ConfiguratorIOS", System.IO.Path.Combine(ConfiguratorPath, "Configurator_UPL.xml"));
+            AdditionalPropertiesForReceipt.Add("IOSPlugin", System.IO.Path.Combine(ConfiguratorPath, "Configurator_UPL.xml"));
 		}
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
