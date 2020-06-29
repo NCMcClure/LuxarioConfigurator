@@ -10,7 +10,7 @@ public class Configurator : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "ImageWriteQueue", "RenderCore", "RHI" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "ImageWriteQueue", "RenderCore", "RHI", "Json" });
 
         string ConfiguratorPath = Utils.MakePathRelativeTo(ModuleDirectory, Target.RelativeEnginePath);
         
