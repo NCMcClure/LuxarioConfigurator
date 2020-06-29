@@ -132,8 +132,39 @@ TArray<FColor> UInstagramBlueprintStatics::GetTextureColorData(class UTexture2D*
 	}
 	else
 	{
-		UE_LOG(LogTemp, Log, TEXT("UInstagramBlueprintStatics::ShareToInstagram: ImageData is null"));
+		UE_LOG(LogTemp, Log, TEXT("UInstagramBlueprintStatics::GetTextureColorData: ImageData is null"));
 	}
 
 	return Pixels;
+}
+
+void UInstagramBlueprintStatics::InvertRAndBChannels(class UTexture2D* Texture)
+{
+	if (!Texture)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UInstagramBlueprintStatics::InvertRAndBChannels: Texture is null!"));
+		return;
+	}
+
+	if (FColor* ImageData = reinterpret_cast<FColor*>(Texture->PlatformData->Mips[0].BulkData.Lock(LOCK_READ_WRITE)))
+	{
+		const int32 Width = Texture->GetSizeX();
+		const int32 Height = Texture->GetSizeY();
+
+		uint8 TempR = 0x0;
+
+		for (int32 I = 0; I < Width * Height; I++)
+		{
+			TempR = ImageData[I].R;
+			ImageData[I].R = ImageData[I].B;
+			ImageData[I].B = TempR;
+		}
+
+		Texture->PlatformData->Mips[0].BulkData.Unlock();
+		Texture->UpdateResource();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("UInstagramBlueprintStatics::InvertRAndBChannels: ImageData is null"));
+	}
 }

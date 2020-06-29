@@ -23,6 +23,9 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	static bool IsInstagramAvailable();
+
+	UFUNCTION(BlueprintCallable)
+	static void InvertRAndBChannels(class UTexture2D* Texture);
 private:
 	static TArray<FColor> GetTextureColorData(class UTexture2D* Texture);
 };

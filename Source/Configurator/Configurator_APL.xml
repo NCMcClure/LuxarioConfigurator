@@ -16,33 +16,12 @@
   <prebuildCopies>
     <copyDir src="$S(PluginDir)/java" dst="$S(BuildDir)" />
   </prebuildCopies>
-	<proguardAdditions>
-    	<insert>
-    		-keep class * extends java.util.ListResourceBundle {
-			    protected Object[][] getContents();
-			}
-
-			-keep public class com.google.android.gms.common.internal.safeparcel.SafeParcelable {
-			    public static final *** NULL;
-			}
-
-			-keepnames @com.google.android.gms.common.annotation.KeepName class *
-			-keepclassmembernames class * {
-			    @com.google.android.gms.common.annotation.KeepName *;
-			}
-
-			-keepnames class * implements android.os.Parcelable {
-			    public static final ** CREATOR;
-			}
-	    </insert>
-	</proguardAdditions>
 	
 	<gameActivityImportAdditions>
 		<insert>
       import android.util.Log;
       import android.os.Bundle;
       import android.app.ActivityManager;
-      import android.widget.Toast;
     </insert>
 	</gameActivityImportAdditions>
 	<gameActivityOnStartAdditions>
@@ -55,38 +34,6 @@
 	</gameActivityOnCreateAdditions>
 	<gameActivityClassAdditions>
 		<insert>
-      private static final int REQUEST_CHECK_SETTINGS = 0x1;
-      private Intent serviceIntent;
-      private boolean startedWithServiceRunning;
-
-      public void AndroidThunkJava_CreateGoogleMap(final boolean trackingEnabled,
-      final float posX, final float posY,
-      final float sizeX, final float sizeY, float renderX) {
-      Log.debug("In AndroidThunkJava_CreateGoogleMap");
-      DisplayMetrics dm = getResources().getDisplayMetrics();
-      final float scale = dm.widthPixels / renderX;
-      Log.debug("dm:" + dm.widthPixels + "render:" + renderX);
-
-      Log.debug("new UEMapDialog");
-      _activity.runOnUiThread(new Runnable() {
-      public void run() {
-      //mMapDialog = new UEMapDialog(_activity,
-      //	trackingEnabled, startedWithServiceRunning,
-      //	(int)(posX * scale), (int) (posY * scale),
-      //	(int) (sizeX * scale), (int) (sizeY * scale));
-      //mMapDialog.show();
-      }
-      });
-      }
-
-      /*
-      *
-      *    String type = "image/*";
-      *    String filename = "/myPhoto.jpg";
-      *    String mediaPath = Environment.getExternalStorageDirectory() + filename;
-      *    createInstagramIntent(type, mediaPath);
-      */
-
 			public void AndroidThunkJava_CreateInstagramIntent(final String MediaType, final String MediaPath)
 			{
 				runOnUiThread(new Runnable() {
@@ -105,18 +52,16 @@
 				});
 			}
       
-    public boolean AndroidThunkJava_IsInstagramInstalled()
-    {
-			PackageManager AndroidPackageManager = getPackageManager();
-			try {
-					return AndroidPackageManager.getApplicationInfo("com.instagram.android", 0).enabled;
+			public boolean AndroidThunkJava_IsInstagramInstalled()
+			{
+				PackageManager AndroidPackageManager = getPackageManager();
+				try {
+						return AndroidPackageManager.getApplicationInfo("com.instagram.android", 0).enabled;
+				}
+				catch (PackageManager.NameNotFoundException e) {
+						return false;
+				}
 			}
-			catch (PackageManager.NameNotFoundException e) {
-					return false;
-			}
-		}
-
-
     </insert>
 	</gameActivityClassAdditions>
 
