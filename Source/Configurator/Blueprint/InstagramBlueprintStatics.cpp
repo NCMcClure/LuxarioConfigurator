@@ -82,9 +82,9 @@ class UTexture2D* UInstagramBlueprintStatics::CropTexture(class UTexture2D* Text
 	const TArray<FColor> Pixels = GetTextureColorData(Texture);
 
 	int32 Index = 0;
-	for (int32 Y = OffsetY; Y < Height; Y++)
+	for (int32 Y = 0; Y < Height; Y++)
 	{
-		FMemory::Memcpy(&MipData[Y * Width], &Pixels[Y * Texture->GetSizeX() + OffsetX], Width * sizeof(FColor));
+		FMemory::Memcpy(&MipData[Y * Width], &Pixels[(Y + OffsetY) * Texture->GetSizeX() + OffsetX], Width * sizeof(FColor));
 	}
 
 	Out->PlatformData->Mips[0].BulkData.Unlock();
