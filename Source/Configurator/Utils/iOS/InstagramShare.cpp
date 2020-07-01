@@ -37,13 +37,6 @@ void PostToInstagram(const FString& Message, const FString& FilePath)
     NSString* NsMessage = [NSString stringWithUTF8String : TCHAR_TO_ANSI(*Message)];
     NSString* NsFilePath = [NSString stringWithUTF8String : TCHAR_TO_ANSI(*FilePath)];
 
-    static bool bIosDicInitialised = false;
-    if (!bIosDicInitialised)
-    {
-        IosDicInitialise();
-        bIosDicInitialised = true;
-    }
-
     [[InstagramShare sharedInstance]postToInstagram:NsMessage WithImage : NsFilePath];
 }
 
@@ -86,10 +79,10 @@ static InstagramShare* sharedInstance = nil;
                 if (ChangeRequest != nil)
                 {
                     Placeholder = [ChangeRequest placeholderForCreatedAsset];
-                    MyManager *sharedManager = [MyManager sharedManager];
-                    sharedManager.url = [NSURL URLWithString : [NSString stringWithFormat : @"instagram://library?LocalIdentifier=\%@", [[Placeholder localIdentifier] substringToIndex:36]]];
+                    InstagramShare* SharedInstance = [InstagramShare sharedInstance];
+                    SharedInstance.url = [NSURL URLWithString : [NSString stringWithFormat : @"instagram://library?LocalIdentifier=\%@", [[Placeholder localIdentifier] substringToIndex:36]]];
                     NSLog(@"Configurator: Placeholder -> %@", Placeholder);
-                    NSLog(@"Configurator: Share URL -> %@", sharedManager.url);
+                    NSLog(@"Configurator: Share URL -> %@", SharedInstance.url);
                 }
                 else
                 {
@@ -98,10 +91,10 @@ static InstagramShare* sharedInstance = nil;
             } completionHandler:^(BOOL success, NSError *error) {
                 if (success) {
                     dispatch_async(dispatch_get_main_queue(), ^ {
-                        MyManager *sharedManager = [MyManager sharedManager];
-                        NSLog(@"Configurator: Opening url -> %@", sharedManager.url);
-                        if ([[UIApplication sharedApplication] canOpenURL:sharedManager.url]) {
-                            [[UIApplication sharedApplication] openURL:sharedManager.url options:@{} completionHandler:nil];
+                        InstagramShare* SharedInstance = [InstagramShare sharedInstance];
+                        NSLog(@"Configurator: Opening url -> %@", SharedInstance.url);
+                        if ([[UIApplication sharedApplication] canOpenURL:SharedInstance.url]) {
+                            [[UIApplication sharedApplication] openURL:SharedInstance.url options:@{} completionHandler:nil];
                         } else {
                             NSLog(@"Instagram is not installed");
                         }
