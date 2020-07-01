@@ -10,34 +10,6 @@
 #import "InstagramShare.h"
 #import <Photos/Photos.h>
 
-@implementation MyManager
-
-@synthesize url;
-
-#pragma mark Singleton Methods
-
-+ (id)sharedManager {
-    static MyManager *sharedMyManager = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        sharedMyManager = [[self alloc] init];
-    });
-    return sharedMyManager;
-}
-
-- (id)init {
-  if (self = [super init]) {
-      url = nil;
-  }
-  return self;
-}
-
-- (void)dealloc {
-    [super dealloc];
-  // Should never be called, but just here for clarity really.
-}
-
-@end
 
 FString GetStorageFilePath(const FString& FileName)
 {
@@ -60,11 +32,6 @@ bool IsInstagramInstalled()
     return false;
 }
 
-void IosDicInitialise()
-{
-    [[InstagramShare sharedInstance]handshake];
-}
-
 void PostToInstagram(const FString& Message, const FString& FilePath)
 {
     NSString* NsMessage = [NSString stringWithUTF8String : TCHAR_TO_ANSI(*Message)];
@@ -82,7 +49,7 @@ void PostToInstagram(const FString& Message, const FString& FilePath)
 
 @implementation InstagramShare
 
-@synthesize dic;
+@synthesize url;
 
 static InstagramShare* sharedInstance = nil;
 +(InstagramShare*)sharedInstance {
@@ -92,20 +59,14 @@ static InstagramShare* sharedInstance = nil;
     return sharedInstance;
 }
 
-
 -(id)init
 {
     if (self = [super init])
     {
-        nativeWindow = [UIApplication sharedApplication].keyWindow;
+        url = nil;
     }
 
     return self;
-}
-
--(void)handshake
-{
-    NSLog(@"Handshake completed!");
 }
 
 -(void)postToInstagram:(NSString*)message WithImage : (NSString*)imagePath;
