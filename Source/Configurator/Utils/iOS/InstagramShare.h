@@ -28,7 +28,6 @@ bool IsInstagramInstalled();
 
 +(InstagramShare*)sharedInstance;
 
--(void)handshake;
 -(void)postToInstagram:(NSString*)message WithImage : (NSString*)imagePath;
 @end
 
