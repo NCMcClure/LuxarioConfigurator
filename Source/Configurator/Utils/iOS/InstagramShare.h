@@ -15,32 +15,20 @@
 
 #import <Foundation/Foundation.h>
 
-void IosDicInitialise();
 void PostToInstagram(const FString& Message, const FString& FilePath);
 FString GetStorageFilePath(const FString& FileName);
 bool IsInstagramInstalled();
 
-@interface InstagramShare : NSObject <UIDocumentInteractionControllerDelegate>
+@interface InstagramShare : NSObject
 {
-    UIWindow* nativeWindow;
-}
-
-@property(nonatomic, retain) UIDocumentInteractionController* dic;
-
-+(InstagramShare*)sharedInstance;
-
--(void)handshake;
--(void)postToInstagram:(NSString*)message WithImage : (NSString*)imagePath;
-@end
-
-@interface MyManager : NSObject {
     NSURL* url;
 }
 
 @property (nonatomic, retain) NSURL* url;
 
-+ (id)sharedManager;
++(InstagramShare*)sharedInstance;
 
+-(void)postToInstagram:(NSString*)message WithImage : (NSString*)imagePath;
 @end
 
 #endif

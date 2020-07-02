@@ -10,34 +10,6 @@
 #import "InstagramShare.h"
 #import <Photos/Photos.h>
 
-@implementation MyManager
-
-@synthesize url;
-
-#pragma mark Singleton Methods
-
-+ (id)sharedManager {
-    static MyManager *sharedMyManager = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        sharedMyManager = [[self alloc] init];
-    });
-    return sharedMyManager;
-}
-
-- (id)init {
-  if (self = [super init]) {
-      url = nil;
-  }
-  return self;
-}
-
-- (void)dealloc {
-    [super dealloc];
-  // Should never be called, but just here for clarity really.
-}
-
-@end
 
 FString GetStorageFilePath(const FString& FileName)
 {
@@ -60,29 +32,17 @@ bool IsInstagramInstalled()
     return false;
 }
 
-void IosDicInitialise()
-{
-    [[InstagramShare sharedInstance]handshake];
-}
-
 void PostToInstagram(const FString& Message, const FString& FilePath)
 {
     NSString* NsMessage = [NSString stringWithUTF8String : TCHAR_TO_ANSI(*Message)];
     NSString* NsFilePath = [NSString stringWithUTF8String : TCHAR_TO_ANSI(*FilePath)];
-
-    static bool bIosDicInitialised = false;
-    if (!bIosDicInitialised)
-    {
-        IosDicInitialise();
-        bIosDicInitialised = true;
-    }
 
     [[InstagramShare sharedInstance]postToInstagram:NsMessage WithImage : NsFilePath];
 }
 
 @implementation InstagramShare
 
-@synthesize dic;
+@synthesize url;
 
 static InstagramShare* sharedInstance = nil;
 +(InstagramShare*)sharedInstance {
@@ -92,20 +52,14 @@ static InstagramShare* sharedInstance = nil;
     return sharedInstance;
 }
 
-
 -(id)init
 {
     if (self = [super init])
     {
-        nativeWindow = [UIApplication sharedApplication].keyWindow;
+        url = nil;
     }
 
     return self;
-}
-
--(void)handshake
-{
-    NSLog(@"Handshake completed!");
 }
 
 -(void)postToInstagram:(NSString*)message WithImage : (NSString*)imagePath;
@@ -125,10 +79,10 @@ static InstagramShare* sharedInstance = nil;
                 if (ChangeRequest != nil)
                 {
                     Placeholder = [ChangeRequest placeholderForCreatedAsset];
-                    MyManager *sharedManager = [MyManager sharedManager];
-                    sharedManager.url = [NSURL URLWithString : [NSString stringWithFormat : @"instagram://library?LocalIdentifier=\%@", [[Placeholder localIdentifier] substringToIndex:36]]];
+                    InstagramShare* SharedInstance = [InstagramShare sharedInstance];
+                    SharedInstance.url = [NSURL URLWithString : [NSString stringWithFormat : @"instagram://library?LocalIdentifier=\%@", [[Placeholder localIdentifier] substringToIndex:36]]];
                     NSLog(@"Configurator: Placeholder -> %@", Placeholder);
-                    NSLog(@"Configurator: Share URL -> %@", sharedManager.url);
+                    NSLog(@"Configurator: Share URL -> %@", SharedInstance.url);
                 }
                 else
                 {
@@ -137,10 +91,10 @@ static InstagramShare* sharedInstance = nil;
             } completionHandler:^(BOOL success, NSError *error) {
                 if (success) {
                     dispatch_async(dispatch_get_main_queue(), ^ {
-                        MyManager *sharedManager = [MyManager sharedManager];
-                        NSLog(@"Configurator: Opening url -> %@", sharedManager.url);
-                        if ([[UIApplication sharedApplication] canOpenURL:sharedManager.url]) {
-                            [[UIApplication sharedApplication] openURL:sharedManager.url options:@{} completionHandler:nil];
+                        InstagramShare* SharedInstance = [InstagramShare sharedInstance];
+                        NSLog(@"Configurator: Opening url -> %@", SharedInstance.url);
+                        if ([[UIApplication sharedApplication] canOpenURL:SharedInstance.url]) {
+                            [[UIApplication sharedApplication] openURL:SharedInstance.url options:@{} completionHandler:nil];
                         } else {
                             NSLog(@"Instagram is not installed");
                         }
