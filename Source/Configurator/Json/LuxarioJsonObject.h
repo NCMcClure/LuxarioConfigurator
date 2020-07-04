@@ -21,6 +21,8 @@ public:
 	ULuxarioJsonObject* AddFloatProperty(const FString& Name, float Value);
 	UFUNCTION(BlueprintCallable)
 	ULuxarioJsonObject* AddStringProperty(const FString& Name, const FString& Value);
+	UFUNCTION(BlueprintCallable)
+	ULuxarioJsonObject* AddBoolProperty(const FString& Name, bool Value);
 	UFUNCTION(BlueprintPure)
 	FString ToString() const;
 	UFUNCTION(BlueprintPure)

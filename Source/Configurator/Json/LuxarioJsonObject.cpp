@@ -24,6 +24,12 @@ ULuxarioJsonObject* ULuxarioJsonObject::AddStringProperty(const FString& Name, c
     return this;
 }
 
+ULuxarioJsonObject* ULuxarioJsonObject::AddBoolProperty(const FString& Name, bool Value)
+{
+    JsonObject->SetBoolField(Name, Value);
+    return this;
+}
+
 FString ULuxarioJsonObject::ToString() const
 {
     FString OutputString;
