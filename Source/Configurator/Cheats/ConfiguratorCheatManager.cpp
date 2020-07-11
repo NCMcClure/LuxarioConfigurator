@@ -21,3 +21,17 @@ void UConfiguratorCheatManager::ConfiguratorShareSampleToInstagram()
 		UInstagramBlueprintStatics::ShareToInstagram(SampleInstagramTexture);
 	}
 }
+
+UObject* UConfiguratorCheatManager::LoadObjectFromAssetPath(TSubclassOf<UObject> ObjectClass, FName Path, bool& IsValid)
+{
+	IsValid = false;
+
+	if (Path == NAME_None) return NULL;
+	//~~~~~~~~~~~~~~~~~~~~~
+
+	UObject* LoadedObj = StaticLoadObject(ObjectClass, NULL, *Path.ToString());
+
+	IsValid = LoadedObj != nullptr;
+
+	return LoadedObj;
+}
